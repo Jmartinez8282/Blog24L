@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Container, Row, Col,Button,Form } from "react-bootstrap";
+import {useNavigate} from 'react-router-dom';
 
 
 const Login = () => {
+
+  let navigate = useNavigate();
 
     //usestates to hold our username and passwords
     const [Username, setUsername] = useState('');
@@ -55,7 +58,7 @@ const Login = () => {
               </Button>
               {/* checking github */}
               <p className="mt-3">Don't have an account?</p>
-              <Button variant="outline-primary" onClick={handleSubmit}>
+              <Button variant="outline-primary" onClick={() => navigate('/CreateAccount')}>
                 Create Account
               </Button>
             </Form>

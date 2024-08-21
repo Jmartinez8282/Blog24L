@@ -5,6 +5,8 @@ import Modal from "react-bootstrap/Modal";
 
 import Form from "react-bootstrap/Form";
 import Accordion from 'react-bootstrap/Accordion';
+import {useNavigate} from 'react-router-dom';
+import { checkToken } from "../Services/DataService";
 
 const Dashboard = ({ isDarkMode }) => {
   const [show, setShow] = useState(false);
@@ -110,6 +112,17 @@ const handleCategory = (e) => {
 const handleImage = (e) => {
     setBlogImage(e.target.value)
 }
+let navigate = useNavigate();
+//useEffect is the first thing that fires onload.
+  useEffect(() => {
+    if(!checkToken())
+    {
+      navigate('/Login');
+    }
+  
+    
+  }, [])
+  
 
   return (
     <>
