@@ -32,6 +32,31 @@ const createAccount = async (createduser) =>
         
 }
 
+const login = async (loginUser) => 
+{
+    const result = await fetch('http://localhost:5006/api/User/Login',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(loginUser)
+    })
+    if(!result.ok)
+    {
+        const message = `Yo yo you have an Error Check your code!${result.status}`
+        throw new Error(message);
+    }
+        let data = await result.json();
+        console.log(data);
+        return data;
+}
+
+    const GetLoggedInUser = async (username) => 
+    {
+       let result = await fetch(`"http://localhost:5006/api/User/GetUserByUsername/${username}"`)
+       console.log(result)
+    }
 
 
-export {checkToken,createAccount}
+
+export {checkToken,createAccount,login,GetLoggedInUser}
