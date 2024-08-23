@@ -18,6 +18,9 @@ const Dashboard = ({ isDarkMode }) => {
 
   const [edit, setEdit] = useState(false);
 
+  const [userId, setUserId] = useState(0);
+  const [publisherName, setPublisherName] = useState("");
+
   //Dummy data useState
   const [blogItems, setBlogItems] = useState([
     {
@@ -71,6 +74,39 @@ const Dashboard = ({ isDarkMode }) => {
       Published: false
     },
   ]);
+
+  const handleSaveWithPublish = () =>
+  {
+    const published = {
+      Id:0,
+      UserId: userId,
+      PublisherName:publisherName,
+      Tag: blogTags,
+      Title:blogTitle,
+      Image:blogImage,
+      Description:blogDescription,
+      Date: new Date(),
+      Category: blogCategory,
+      IsPublished: true,
+      IsDeleted: false,
+    }
+  }
+  const handleSaveWithUnpublish = () =>
+  {
+    const published = {
+      Id:0,
+      UserId: 0,
+      PublisherName:"",
+      Tag: "",
+      Title:"",
+      Image:"",
+      Description:"",
+      Date: "",
+      Category: "",
+      IsPublished: true,
+      IsDeleted: false,
+    }
+  }
 
 
   const handleClose = () => setShow(false);
@@ -182,10 +218,10 @@ let navigate = useNavigate();
             <Button variant="outline-secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="outline-primary" onClick={handleClose}>
+            <Button variant="outline-primary" onClick={handleSaveWithUnpublish}>
             {edit ? "  Save Changes" : "Save"}
             </Button>
-            <Button variant="outline-primary" onClick={handleClose}>
+            <Button variant="outline-primary" onClick={handleSaveWithPublish}>
               {edit ? "  Save Changes" : "Save"} and Publish
             </Button>
           </Modal.Footer>
