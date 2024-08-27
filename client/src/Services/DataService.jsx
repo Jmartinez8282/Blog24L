@@ -56,10 +56,15 @@ const login = async (loginUser) =>
        let result = await fetch(`http://localhost:5006/api/User/GetUserByUsername/${username}`)
        
        userData = await result.json();
-console.log(userData)
+        console.log(userData)
 
+    }
+
+    const LoggedInData = () => 
+    {
+        return userData;
     }
 
 
 
-export {checkToken,createAccount,login,GetLoggedInUser}
+export {checkToken,createAccount,login,GetLoggedInUser,LoggedInData}

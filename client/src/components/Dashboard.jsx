@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Accordion from 'react-bootstrap/Accordion';
 import {useNavigate} from 'react-router-dom';
-import { checkToken } from "../Services/DataService";
+import { checkToken, GetLoggedInUser, LoggedInData } from "../Services/DataService";
 
 const Dashboard = ({ isDarkMode }) => {
   const [show, setShow] = useState(false);
@@ -76,7 +76,8 @@ const Dashboard = ({ isDarkMode }) => {
   ]);
 
   const handleSaveWithPublish = () =>
-  {
+    {
+    let {publisherName, userId}  = LoggedInData();
     const published = {
       Id:0,
       UserId: userId,
@@ -90,22 +91,25 @@ const Dashboard = ({ isDarkMode }) => {
       IsPublished: true,
       IsDeleted: false,
     }
+    console.log(published)
   }
   const handleSaveWithUnpublish = () =>
   {
-    const published = {
+    let {publisherName, userId}  = LoggedInData();
+    const notPublished = {
       Id:0,
-      UserId: 0,
-      PublisherName:"",
-      Tag: "",
-      Title:"",
-      Image:"",
-      Description:"",
-      Date: "",
-      Category: "",
-      IsPublished: true,
+      UserId: userId,
+      PublisherName:publisherName,
+      Tag: blogTags,
+      Title:blogTitle,
+      Image:blogImage,
+      Description:blogDescription,
+      Date: new Date(),
+      Category: blogCategory,
+      IsPublished: false,
       IsDeleted: false,
     }
+    console.log(notPublished)
   }
 
 
@@ -145,9 +149,9 @@ const handleTags = (e) => {
 const handleCategory = (e) => {
     setBlogCategory(e.target.value)
 }
-const handleImage = (e) => {
-    setBlogImage(e.target.value)
-}
+// const handleImage = (e) => {
+//     setBlogImage(e.target.value)
+// }
 let navigate = useNavigate();
 //useEffect is the first thing that fires onload.
   useEffect(() => {
@@ -158,6 +162,16 @@ let navigate = useNavigate();
   
     
   }, [])
+
+  const handleImage = async (e) =>
+  {
+    let file = e.target.files[0];
+     const reader = new FileReader();
+     reader.onloadend = () => {
+      console.log(reader.result);
+     }
+     reader.readAsDataURL(file);
+  }
   
 
   return (
@@ -191,8 +205,9 @@ let navigate = useNavigate();
                 <Form.Label>Description</Form.Label>
                 <Form.Control as="textarea" placeholder="Enter Description" value={blogDescription} onChange={handleDescription} />
                 </Form.Group>
-                <FormGroup>
-                    <Form.Select controlId="Category" value={blogCategory} onChange={handleCategory}>
+                <FormGroup  controlId="Category">
+                <Form.Label>Title</Form.Label>
+                    <Form.Select value={blogCategory} onChange={handleCategory}>
                         <option>Select Category</option>
                         <option value="Food">Food</option>
                         <option value="Fitness" >Fitness</option>
@@ -202,12 +217,12 @@ let navigate = useNavigate();
                 </FormGroup>
 
               <Form.Group className="mb-3" controlId="Tags">
-                <Form.Label>Tags</Form.Label>
+              <Form.Label>Tags</Form.Label>
                 <Form.Control type="text" placeholder="Enter Tag" value={blogTags} onChange={handleTags} />
               </Form.Group>
               <FormGroup className="mb-3" controlId="Image">
                 <Form.Label>Pick an Image</Form.Label >
-                <Form.Control type="file" placeholder="Select an Image from file" value={blogImage} onChange={handleImage} />
+                <Form.Control type="file" placeholder="Select an Image from file" accept="image/png,image/jpg" onChange={handleImage} />
 
               </FormGroup>
              
