@@ -70,6 +70,8 @@ public class BlogItemService : ControllerBase
         throw new NotImplementedException();
     }
 
-
-
+    public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)
+    {
+        return _context.BlogInfo.Where(item => item.UserId == userId);
+    }
 }

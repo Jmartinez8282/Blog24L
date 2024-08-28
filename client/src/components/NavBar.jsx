@@ -8,7 +8,7 @@ import Moon from "../assets/moon.jpg";
 import { Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const NavBar = ({ isDarkMode, toggleDarkMode }) => {
+const NavBar = ({ isDarkMode, toggleDarkMode, user }) => {
   return (
     <>
       <Navbar
@@ -48,7 +48,7 @@ const NavBar = ({ isDarkMode, toggleDarkMode }) => {
                 Login
               </Nav.Link>
              
-              <Nav.Link>Welcome Jose</Nav.Link>
+              <Nav.Link>Welcome {user ? user.username : "Guest"}</Nav.Link>
               <Nav.Link>
                 <Image className="profilepic" src={Moon} roundedCircle />
               </Nav.Link>
