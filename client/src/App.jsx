@@ -33,6 +33,20 @@ const App = () => {
   const toggleDarkMode = () => {
     setIsDarkMode((prevMode) => !prevMode);
   };
+  useEffect(() => {
+
+    const storedUser = localStorage.getItem("UserData");
+    console.log(JSON.parse(storedUser),"this is stored user")
+    if(storedUser)
+    {
+        let Userstored = JSON.parse(storedUser);
+        console.log(Userstored.publisherName,"userstored")
+      setUser(Userstored);
+    }
+  
+    
+    
+  }, [])
 
   return (
     <>

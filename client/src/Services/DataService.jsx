@@ -1,5 +1,10 @@
 //This will hold our helper functions or method.
 let userData = {};
+if(localStorage.getItem("UserData")) {
+    userData = JSON.parse(localStorage.getItem("UserData"));
+}
+
+
 //helper function to check our token.
 const checkToken = () => {
     let result = false;
@@ -47,6 +52,11 @@ const login = async (loginUser) =>
         throw new Error(message);
     }
         let data = await result.json();
+        if(data.token != null)
+        {
+            localStorage.setItem("Token",data.token);
+            localStorage.setItem("UserData",JSON.stringify(data.user));// we might need to comment this out
+        }
         console.log(data,"login method");
         return data;
 }
@@ -57,11 +67,16 @@ const login = async (loginUser) =>
        
        userData = await result.json();
         console.log(userData,"getloggedinsuser method")
+        localStorage.setItem("UserData",JSON.stringify(userData));
+        userData = JSON.parse(localStorage.getItem("UserData"));
 
     }
 
     const LoggedInData = () => 
     {
+        if(!userData && localStorage.getItem("UserData")) {
+            userData = JSON.parse(localStorage.getItem("UserData"))
+        }
         return userData;
     }
 

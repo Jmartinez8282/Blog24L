@@ -52,7 +52,7 @@ const Dashboard = ({ isDarkMode }) => {
 
     }
   }
-  const handleSaveWithUnpublish = () =>
+  const handleSaveWithUnpublish = async () =>
   {
     let {publisherName, userId}  = LoggedInData();
     const notPublished = {
@@ -69,6 +69,16 @@ const Dashboard = ({ isDarkMode }) => {
       IsDeleted: false,
     }
     console.log(notPublished)
+    handleClose();
+    let result = await AddBlogItems(notPublished)
+    if(result)
+    {
+      let userBlogItems = await GetItemsByUserId(userId);
+      setBlogItems(userBlogItems);
+      
+      
+
+    }
   }
 
 
@@ -112,15 +122,33 @@ const handleCategory = (e) => {
 //     setBlogImage(e.target.value)
 // }
 let navigate = useNavigate();
+
+
+//load data
+const loadUserData = async () => {
+    let userInfo = LoggedInData();
+    setUserId(userInfo.userId);
+    setPublisherName(userInfo.publisherName);
+    console.log("User info:", userInfo);
+    setTimeout(async () => {
+
+      let userBlogItems = await GetItemsByUserId(userInfo.userId)
+      setBlogItems(userBlogItems);
+      console.log("Loaded blgo items: ", userBlogItems);
+    },1000)
+
+}
+
+
 //useEffect is the first thing that fires onload.
   useEffect(() => {
     if(!checkToken())
     {
       navigate('/Login');
     }
-  
+    loadUserData();
     
-  }, [])
+  }, [navigate])
 
   const handleImage = async (e) =>
   {
@@ -128,6 +156,7 @@ let navigate = useNavigate();
      const reader = new FileReader();
      reader.onloadend = () => {
       console.log(reader.result);
+      setBlogImage(reader.result);
      }
      reader.readAsDataURL(file);
   }

@@ -40,10 +40,11 @@ const Login = ({onLogin}) => {
        if(token.token != null)
        {
         localStorage.setItem("Token",token.token);
-        GetLoggedInUser(Username);
+        localStorage.setItem("UserData",JSON.stringify(userData));
+        await GetLoggedInUser(Username);
         navigate('/Dashboard')
        }
-        
+        return userData
     }
 
 
