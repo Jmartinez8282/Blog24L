@@ -8,7 +8,18 @@ import Moon from "../assets/moon.jpg";
 import { Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const NavBar = ({ isDarkMode, toggleDarkMode, user }) => {
+const NavBar = ({ isDarkMode, toggleDarkMode, user,isLoggedIn,setIsLoggedIn }) => {
+
+
+  const handleLogout = () => 
+  {
+    localStorage.clear();
+    setUser(null);
+    setIsLoggedIn(false);
+      
+    
+  }
+
   return (
     <>
       <Navbar
@@ -44,9 +55,13 @@ const NavBar = ({ isDarkMode, toggleDarkMode, user }) => {
               <Nav.Link as={Link} to={"/CreateAccount"}>
                 Create Account
               </Nav.Link>
-              <Nav.Link as={Link} to={"/Login"}>
+              {isLoggedIn ? <Nav.Link as={Link} to={"/Login"} onClick={handleLogout} >
+                Logout
+              </Nav.Link> : <Nav.Link as={Link} to={"/Login"}>
                 Login
-              </Nav.Link>
+              </Nav.Link>  }
+              
+              
              
               <Nav.Link>Welcome {user ? user.publisherName : "Guest"}</Nav.Link>
               <Nav.Link>

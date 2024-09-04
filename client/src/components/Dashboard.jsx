@@ -21,7 +21,14 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
   const [userId, setUserId] = useState(0);
   const [publisherName, setPublisherName] = useState("");
+
   const [isLoading, setIsLoading] = useState(true);
+
+  const [blogId, setBlogId] = useState(0);
+  const [IsDeleted, setIsDeleted] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
+
+  
   
   //Dummy data useState
   const [blogItems, setBlogItems] = useState([]);
@@ -38,6 +45,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   
         let userBlogItems = await GetItemsByUserId(userInfo.userId)
         setBlogItems(userBlogItems);
+        setUserId(userId);
       
         setIsLoading(false);
         console.log("Loaded blgo items: ", userBlogItems);
@@ -57,7 +65,8 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       }
       
     }, [navigate])
-  const handleSaveWithPublish = async () =>
+ 
+    const handleSave = async ({target:{textContent}}) =>
     {
     let {publisherName, userId}  = LoggedInData();
     const published = {
@@ -70,7 +79,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       Description:blogDescription,
       Date: new Date(),
       Category: blogCategory,
-      IsPublished: true,
+      IsPublished: textContent === "Save" ? false: true,
       IsDeleted: false,
     }
     console.log(published)
@@ -85,56 +94,65 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
     }
   }
-  const handleSaveWithUnpublish = async () =>
-  {
-    let {publisherName, userId}  = LoggedInData();
-    const notPublished = {
-      Id:0,
-      UserId: userId,
-      PublisherName:publisherName,
-      Tag: blogTags,
-      Title:blogTitle,
-      Image:blogImage,
-      Description:blogDescription,
-      Date: new Date(),
-      Category: blogCategory,
-      IsPublished: false,
-      IsDeleted: false,
-    }
-    console.log(notPublished)
-    handleClose();
-    let result = await AddBlogItems(notPublished)
-    if(result)
-    {
-      let userBlogItems = await GetItemsByUserId(userId);
-      setBlogItems(userBlogItems);
+  // const handleSaveWithUnpublish = async () =>
+  // {
+  //   let {publisherName, userId}  = LoggedInData();
+  //   const notPublished = {
+  //     Id:0,
+  //     UserId: userId,
+  //     PublisherName:publisherName,
+  //     Tag: blogTags,
+  //     Title:blogTitle,
+  //     Image:blogImage,
+  //     Description:blogDescription,
+  //     Date: new Date(),
+  //     Category: blogCategory,
+  //     IsPublished: false,
+  //     IsDeleted: false,
+  //   }
+  //   console.log(notPublished)
+  //   handleClose();
+  //   let result = await AddBlogItems(notPublished)
+  //   if(result)
+  //   {
+  //     let userBlogItems = await GetItemsByUserId(userId);
+  //     setBlogItems(userBlogItems);
       
       
 
-    }
-  }
+  //   }
+  // }
 
 
   const handleClose = () => setShow(false);
-  const handleShow = (e) => {
+  
+  const handleShow = (e,{id,publishername,userId,title,description,category,tag,image,isDeleted,isPublished}) => {
     
     setShow(true)
     if(e.target.textContent === 'Add Blog Item')
         {
             setEdit(false);
-            setBlogTitle("");
-            setBlogDescription("");
-            setBlogCategory("");
+           
+            console.log(e.target.textContent, edit)
 
         }else{
-            setEdit(true);
-            setBlogTitle("My Awesome Title");
-            setBlogDescription("My Awesome Description");
-            setBlogCategory("Fitness");
 
-
+          setEdit(true);
+          
+          
         }
-        console.log(e.target.textContent,edit);
+        setBlogId(id)
+        setBlogTitle(title);
+        setUserId(userId);
+        setPublisherName(publishername);
+        setBlogDescription(description);
+        setBlogCategory(category);
+        setBlogTags(tag);
+        setBlogImage(image);
+        setIsDeleted(isDeleted);
+        setIsPublished(isPublished);
+        console.log(e.target.textContent, edit)
+       
 
 };
 
@@ -175,7 +193,7 @@ const handleCategory = (e) => {
         className={isDarkMode ? 'bg-dark text-light p-5': 'bg-light'}
         fluid
       >
-        <Button variant="outline-primary m-2" onClick={handleShow}>
+        <Button variant="outline-primary m-2" onClick={(e) =>handleShow(e,{id:0,userId:userId,title:"",image:"",description:"",category:"",tag:"",isDeleted:false,isPublished:false,publishername:publisherName})}>
        Add Blog Item
         </Button>
         <Button variant="outline-primary m-2" onClick={handleShow}>
@@ -228,10 +246,10 @@ const handleCategory = (e) => {
             <Button variant="outline-secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="outline-primary" onClick={handleSaveWithUnpublish}>
+            <Button variant="outline-primary" onClick={handleSave}>
             {edit ? "  Save Changes" : "Save"}
             </Button>
-            <Button variant="outline-primary" onClick={handleSaveWithPublish}>
+            <Button variant="outline-primary" onClick={handleSave}>
               {edit ? "  Save Changes" : "Save"} and Publish
             </Button>
           </Modal.Footer>
@@ -249,7 +267,7 @@ const handleCategory = (e) => {
 
                 <Col className="d-flex justify-content-end mx-2">
                     <Button variant="outline-danger mx-2">Delete</Button>
-                    <Button variant="outline-info mx-2">Edit</Button>
+                    <Button variant="outline-info mx-2" onClick={(e) => handleShow(e,item)}>Edit</Button>
                     <Button variant="outline-primary mx-2">Unpublish</Button>
                 </Col>
             
@@ -265,7 +283,7 @@ const handleCategory = (e) => {
             
             <Col className="d-flex justify-content-end mx-2">
                     <Button variant="outline-danger mx-2">Delete</Button>
-                    <Button variant="outline-info mx-2">Edit</Button>
+                    <Button variant="outline-info mx-2" onClick={(e) => handleShow(e,item)}>Edit</Button>
                     <Button variant="outline-primary mx-2">Publish</Button>
                 </Col>
             </ListGroup>)
