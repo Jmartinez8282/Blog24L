@@ -139,7 +139,34 @@ const login = async (loginUser) =>
           console.log(data,"from our getitemsbyuserid method")
           return data;
     }
+    //Function to help us update our blog items
+    const updateBlogItems = async (blogItems) => 
+    {
+        const result = await fetch(`http://localhost:5006/api/blog/UpdateBlogItems`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(blogItems)
+        })
+        if(!result.ok)
+        {
+            const message = `Yo yo you have an Error Check your code!${result.status}`
+            throw new Error(message);
+        }
+            let data = await result.json();
+            console.log(data,"from our UpdateBlogItems")
+            return data;
+
+    }
+//function to get our published blog itmes to display
+    const getPublishedBlogItems = async () =>
+    {
+        let result = await fetch("http://localhost:5006/api/blog/GetPublishedItems")
+        let data = await result.json();
+        return data;
+
+    }
 
 
-
-export {checkToken,createAccount,login,GetLoggedInUser,LoggedInData,sendData,AddBlogItems,getBlogItems,GetItemsByUserId}
+export {checkToken,createAccount,login,GetLoggedInUser,LoggedInData,sendData,AddBlogItems,getBlogItems,GetItemsByUserId,updateBlogItems,getPublishedBlogItems}

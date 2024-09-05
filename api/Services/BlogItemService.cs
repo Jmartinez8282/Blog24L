@@ -67,11 +67,15 @@ public class BlogItemService : ControllerBase
 
     public bool UpdateBlogItems(BlogItemModel blogUpdate)
     {
-        throw new NotImplementedException();
+       _context.Update<BlogItemModel>(blogUpdate);
+       return _context.SaveChanges() !=0;
     }
 
     public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)
     {
-        return _context.BlogInfo.Where(item => item.UserId == userId);
+        return _context.BlogInfo.Where(item => item.UserId == userId && item.IsDeleted == false);
+    }
+    public IEnumerable<BlogItemModel> GetPublishedItems() {
+        return _context.BlogInfo.Where(item => item.IsPublished && item.IsDeleted == false);
     }
 }

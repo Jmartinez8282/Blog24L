@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Accordion from 'react-bootstrap/Accordion';
 import {useNavigate} from 'react-router-dom';
-import { AddBlogItems, checkToken, GetItemsByUserId, GetLoggedInUser, LoggedInData } from "../Services/DataService";
+import { AddBlogItems, checkToken, GetItemsByUserId, LoggedInData, updateBlogItems } from "../Services/DataService";
 import Spinner from 'react-bootstrap/Spinner';
 
 const Dashboard = ({ isDarkMode, onLogin }) => {
@@ -25,7 +25,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [blogId, setBlogId] = useState(0);
-  const [IsDeleted, setIsDeleted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
   
@@ -70,7 +70,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     {
     let {publisherName, userId}  = LoggedInData();
     const published = {
-      Id:0,
+      Id:edit ? blogId: 0,
       UserId: userId,
       PublisherName:publisherName,
       Tag: blogTags,
@@ -79,12 +79,21 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       Description:blogDescription,
       Date: new Date(),
       Category: blogCategory,
-      IsPublished: textContent === "Save" ? false: true,
+      IsPublished: textContent === "Save" || textContent == "Save Changes" ? false: true,
       IsDeleted: false,
     }
     console.log(published)
     handleClose();
-    let result = await AddBlogItems(published)
+    let result = false;
+    if(edit)
+    {
+       result = await updateBlogItems(published)
+    
+    }else{
+       result = await AddBlogItems(published)
+
+    }
+
     if(result)
     {
       let userBlogItems = await GetItemsByUserId(userId);
@@ -92,6 +101,8 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       console.log(userBlogItems,"This is frou our UserBlogItems");
       
 
+    }else {
+      alert(`Blog items not ${edit ? "Update" : "Added"}`)
     }
   }
   // const handleSaveWithUnpublish = async () =>
@@ -185,6 +196,38 @@ const handleCategory = (e) => {
      }
      reader.readAsDataURL(file);
   }
+  //function to help us handle pulish and unpublish
+  const handlePublish = async  (item) => 
+    {
+    const {userId} = JSON.parse(localStorage.getItem("UserData"));
+    item.isPublished = !item.isPublished;
+
+    let result = await updateBlogItems(item);
+    if(result)
+    {
+      let userBlogItems = await GetItemsByUserId(userId);
+      setBlogItems(userBlogItems);
+    }else {
+      alert(`Blog item not ${edit ? "updated": "Added"}`);
+    }
+
+
+  }
+
+  //Delete function
+  const handleDelete = async (item) => 
+  {
+    item.isDeleted = !item.isDeleted;
+    let result = await updateBlogItems(item);
+    if(result)
+    {
+      let userBlogItems = await GetItemsByUserId(item.userId)
+      setBlogItems(userBlogItems);
+
+    }else {
+      alert(`Blog item not ${edit ? "Updated" : "Added" }`);
+    }
+  }
   
 
   return (
@@ -266,9 +309,9 @@ const handleCategory = (e) => {
            blogItems.map((item,i) => item.isPublished &&  <ListGroup key={i}>{item.title}
 
                 <Col className="d-flex justify-content-end mx-2">
-                    <Button variant="outline-danger mx-2">Delete</Button>
+                    <Button variant="outline-danger mx-2" onClick={() => handleDelete(item)}>Delete</Button>
                     <Button variant="outline-info mx-2" onClick={(e) => handleShow(e,item)}>Edit</Button>
-                    <Button variant="outline-primary mx-2">Unpublish</Button>
+                    <Button variant="outline-primary mx-2" onClick={() => handlePublish(item)}>Unpublish</Button>
                 </Col>
             
              </ListGroup>)
@@ -282,9 +325,9 @@ const handleCategory = (e) => {
           blogItems.map((item,i )=> !item.isPublished &&  <ListGroup key={i}>{item.title}
             
             <Col className="d-flex justify-content-end mx-2">
-                    <Button variant="outline-danger mx-2">Delete</Button>
+                    <Button variant="outline-danger mx-2" onClick={() => handleDelete(item)}>Delete</Button>
                     <Button variant="outline-info mx-2" onClick={(e) => handleShow(e,item)}>Edit</Button>
-                    <Button variant="outline-primary mx-2">Publish</Button>
+                    <Button variant="outline-primary mx-2" onClick={() => handlePublish(item)} >Publish</Button>
                 </Col>
             </ListGroup>)
          }
