@@ -64,9 +64,9 @@ const App = () => {
           data-bs-theme={isDarkMode ? "dark" : "light"}
         >
           <CarouselHero isDarkMode={isDarkMode} />
-          <Row className="text-center">
+          <Row className="">
             <Col>
-              <h1>Our Blog</h1>
+              <h1 className="text-center">Our Blog</h1>
             </Col>
               <Routes>
                 <Route path="/" element={<BlogPage/>}/>
